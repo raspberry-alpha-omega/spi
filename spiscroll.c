@@ -19,6 +19,28 @@ void spi(uint8_t reg, uint8_t val) {
 	usleep(20);
 }
 
+uint8_t display[8];
+
+void push(uint8_t col) {
+	for (int i = 0; i < 7; ++i) {
+		display[i] = display[i+1];
+		display[7] = col;
+	}
+}
+
+void show() {
+	for (int i = 0; i < 8; ++i) {
+		spi(i+1,display[i]);
+	}
+}
+
+void clear() {
+	for (int i = 0; i < 8; ++i) {
+		push(0);
+	}
+	show();
+}
+
 void setupLEDMatrix(int channel) {
 	if (wiringPiSPISetup(CHANNEL, 1000000) < 0) {
 		fprintf (stderr, "SPI Setup failed: %s\n", strerror (errno));
@@ -33,12 +55,11 @@ void setupLEDMatrix(int channel) {
 
 void spichar(char c) {
 	const uint8_t* bits = &font[c * 8];
-	printf("spichar: sending char %c (%d)\n", c, c);
 	for (int i = 0; i < 8; ++i) {
-		printf("spichar: sending col %d, value %x\n", i, bits[i]);
-		spi(i+1, bits[i]);
+		push(bits[i]);
+		show();
+		usleep(100000);
 	}
-	sleep(1);
 }
 
 void scroll(const char* text) {
@@ -58,5 +79,6 @@ void main(int argc, char** argv) {
 	setupLEDMatrix(CHANNEL);
 	for (;;) {
 		scroll(text);
+		spichar(' ');
 	}
 }
