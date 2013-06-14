@@ -1,13 +1,16 @@
 LC_ALL=C 
 LANG=C
 
-spi : spi.c
-	c99 -o spi spi.c -lwiringPi
+all : spitest scroll spi
 
-all : spitest scroll
+clean :
+	rm spitest spi scroll
 
 spitest : spitest.c
 	c99 -o spitest spitest.c -lwiringPi
+
+spi : spi.c
+	c99 -o spi spi.c -lwiringPi
 
 scroll : spiscroll.c
 	c99 -o scroll spiscroll.c -lwiringPi
