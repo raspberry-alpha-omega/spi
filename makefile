@@ -1,7 +1,7 @@
 LC_ALL=C 
 LANG=C
 
-all : spitest scroll spi
+all : spitest scroll spi mcp3002
 
 clean :
 	rm spitest spi scroll
@@ -14,4 +14,7 @@ spi : spi.c
 
 scroll : spiscroll.c
 	c99 -o scroll spiscroll.c -lwiringPi
+
+mcp3002 : mcp3002.c
+	c99 -o mcp3002 mcp3002.c -lwiringPi
 
